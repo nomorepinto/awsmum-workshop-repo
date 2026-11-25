@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DynamoDB Notes
 
-## Getting Started
+A simple note-taking app built with Next.js (App Router) and Amazon DynamoDB. It is
+the finished, API-connected reference app used in a beginner DynamoDB workshop. Notes
+are created, read, updated, and deleted through Next.js route handlers that talk to a
+DynamoDB table.
 
-First, run the development server:
+## Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Node.js 20 or newer
+- Git
+- An AWS account with access to DynamoDB
+
+## Environment variables
+
+Copy `.env.example` to `.env.local` and fill in your real AWS credentials:
+
+```
+AWS_REGION=ap-southeast-1
+AWS_ACCESS_KEY_ID=your-access-key-id
+AWS_SECRET_ACCESS_KEY=your-secret-access-key
+DYNAMODB_TABLE_NAME=Notes
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`.env.local` is gitignored. These variables are only read on the server (never
+exposed to client code).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## DynamoDB table
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create a table in the **ap-southeast-1** region:
 
-## Learn More
+- **Table name:** `Notes`
+- **Partition key:** `id` (String) — no sort key, no secondary indexes
+- **Capacity:** On-demand
 
-To learn more about Next.js, take a look at the following resources:
+Each item stores: `id`, `title`, `content`, `createdAt` (ISO string), and
+`updatedAt` (ISO string).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## IAM policy
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The access key used above needs permission to read and write the table. Attach this
+policy to the corresponding IAM user or role:
 
-## Deploy on Vercel
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:PutItem",
+        "dynamodb:GetItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:Scan",
+        "dynamodb:Query"
+      ],
+      "Resource": "arn:aws:dynamodb:ap-southeast-1:*:table/Notes*"
+    }
+  ]
+}
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Getting started
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) and start adding notes.
