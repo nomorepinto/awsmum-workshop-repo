@@ -9,15 +9,11 @@ type NoteListProps = {
 
 export default function NoteList({ notes, onEdit, onDelete }: NoteListProps) {
   if (notes.length === 0) {
-    return (
-      <p className="text-center text-slate-500">
-        No notes yet. Add your first note above.
-      </p>
-    );
+    return <p>No notes yet. Add your first note above.</p>;
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div>
       {notes.map((note) => (
         <NoteCard
           key={note.id}
