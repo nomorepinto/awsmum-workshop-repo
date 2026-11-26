@@ -43,9 +43,7 @@ export default function Home() {
 
   return (
     <main>
-      <Header />
-      <NoteForm onSubmit={handleAdd} />
-      <NoteList notes={notes} onEdit={handleEdit} onDelete={handleDelete} />
+      {/* add components here */}
     </main>
   );
 }
